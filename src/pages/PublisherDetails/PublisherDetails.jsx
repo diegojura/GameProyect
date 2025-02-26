@@ -24,6 +24,39 @@ function PublisherDetails() {
         fetchPublisherDetails();
     }, [id]);
 
+    const formatDescription = (description) => {
+        if (!description) return null;
+
+        // Convertir el HTML en un documento para poder manipularlo
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(description, 'text/html');
+        const sections = [];
+        let currentSection = { title: null, content: [] };
+
+        // Procesar cada nodo
+        doc.body.childNodes.forEach(node => {
+            if (node.nodeName === 'H3') {
+                // Si encontramos un nuevo título, guardamos la sección anterior y empezamos una nueva
+                if (currentSection.content.length > 0) {
+                    sections.push({ ...currentSection });
+                }
+                currentSection = {
+                    title: node.textContent,
+                    content: []
+                };
+            } else if (node.nodeName === 'P') {
+                currentSection.content.push(node.textContent);
+            }
+        });
+
+        // Añadir la última sección
+        if (currentSection.content.length > 0) {
+            sections.push(currentSection);
+        }
+
+        return sections;
+    };
+
     if (isLoading) return (
         <div className="flex justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
@@ -44,15 +77,29 @@ function PublisherDetails() {
                 />
             )}
 
-            <div className="space-y-6">
-                <div>
-                    <h2 className="text-2xl font-semibold text-metallic-500 mb-3">Descripción</h2>
-                    <p className="text-metallic-400">{publisher.description || "No hay descripción disponible."}</p>
+            <div className="space-y-8">
+                <div className="prose prose-lg max-w-none">
+                    {formatDescription(publisher.description)?.map((section, index) => (
+                        <div key={index} className="mb-6">
+                            {section.title && (
+                                <h2 className="text-2xl font-semibold text-metallic-500 mb-3">
+                                    {section.title}
+                                </h2>
+                            )}
+                            {section.content.map((paragraph, pIndex) => (
+                                <p key={pIndex} className="text-metallic-600 mb-2 leading-relaxed">
+                                    {paragraph}
+                                </p>
+                            ))}
+                        </div>
+                    ))}
                 </div>
 
                 {publisher.games && publisher.games.length > 0 && (
                     <div>
-                        <h2 className="text-2xl font-semibold text-metallic-500 mb-3">Juegos Publicados</h2>
+                        <h2 className="text-2xl font-semibold text-metallic-500 mb-6">
+                            Juegos Publicados
+                        </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {publisher.games.map(game => (
                                 <GameCard

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { getGamesBy } from '../../services/games';
 
 function GameDetails() {
@@ -10,17 +10,10 @@ function GameDetails() {
     useEffect(() => {
         const fetchGameDetails = async () => {
             try {
-                console.log("Fetching details for game ID:", id);  // 🔍 Depuración
                 const gameData = await getGamesBy(id);
-
-                if (gameData && gameData.name) {
-                    setGame(gameData);
-                } else {
-                    console.error("No se encontró información del juego.");
-                    setGame(null);
-                }
+                setGame(gameData);
             } catch (error) {
-                console.error("Error al obtener los detalles del juego:", error);
+                console.error("Error:", error);
                 setGame(null);
             } finally {
                 setIsLoading(false);
@@ -30,24 +23,90 @@ function GameDetails() {
         fetchGameDetails();
     }, [id]);
 
-    if (isLoading) return <p className="text-center text-xl text-gray-300">Cargando...</p>;
-    if (!game) return <p className="text-center text-xl text-red-500">Juego no encontrado.</p>;
+    if (isLoading) return <div className="text-metallic-400 text-xl">Cargando...</div>;
+    if (!game) return <div className="text-red-500 text-xl">Juego no encontrado</div>;
 
     return (
-        <div className="p-4 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-center text-gray-200">{game.name}</h1>
+        <div className="bg-industrial-200 rounded-lg p-6 shadow-xl">
+            <h1 className="text-4xl font-bold text-metallic-600 mb-6">{game.name}</h1>
+            
             <img 
-                src={game.background_image || "https://via.placeholder.com/600"} 
-                alt={game.name} 
-                className="w-full h-96 object-cover my-4 rounded-lg" 
+                src={game.background_image} 
+                alt={game.name}
+                className="w-full h-96 object-cover rounded-lg mb-6" 
             />
-            <p className="text-lg text-gray-300">{game.description_raw || "Descripción no disponible."}</p>
-            <p className="mt-2 text-gray-300">
-                <strong>Géneros:</strong> {game.genres?.length ? game.genres.map(g => g.name).join(", ") : "No disponible"}
-            </p>
-            <p className="text-gray-300">
-                <strong>Plataformas:</strong> {game.platforms?.length ? game.platforms.map(p => p.platform.name).join(", ") : "No disponible"}
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div className="space-y-4">
+                    <h2 className="text-2xl font-semibold text-metallic-500">Detalles</h2>
+                    
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-medium text-metallic-400">Géneros</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {game.genres?.map(genre => (
+                                <Link 
+                                    key={genre.id}
+                                    to={`/genre/${genre.slug}`}
+                                    className="px-3 py-1 bg-metallic-100 text-metallic-600 rounded-full hover:bg-metallic-200 transition"
+                                >
+                                    {genre.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-medium text-metallic-400">Tags</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {game.tags?.map(tag => (
+                                <Link 
+                                    key={tag.id}
+                                    to={`/tag/${tag.slug}`}
+                                    className="px-3 py-1 bg-metallic-100 text-metallic-600 rounded-full hover:bg-metallic-200 transition"
+                                >
+                                    {tag.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-medium text-metallic-400">Publishers</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {game.publishers?.map(publisher => (
+                                <Link 
+                                    key={publisher.id}
+                                    to={`/publisher/${publisher.id}`}
+                                    className="px-4 py-2 bg-accent-100 text-white rounded hover:bg-accent-200 transition"
+                                >
+                                    {publisher.name}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <h3 className="text-lg font-medium text-metallic-400">Plataformas</h3>
+                        <div className="flex flex-wrap gap-2">
+                            {game.platforms?.map(platform => (
+                                <span 
+                                    key={platform.platform.id}
+                                    className="px-3 py-1 bg-industrial-300 text-metallic-600 rounded"
+                                >
+                                    {platform.platform.name}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="prose prose-lg text-metallic-500">
+                <h2 className="text-2xl font-semibold text-metallic-500 mb-4">Descripción</h2>
+                <p>{game.description_raw}</p>
+            </div>
         </div>
     );
 }

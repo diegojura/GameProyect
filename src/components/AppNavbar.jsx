@@ -4,6 +4,7 @@ import webLogo from "../assets/react.svg"
 const links = [
   { name: "Home", path: "/" },
   { name: "Games", path: "/games" },
+  { name: "Publishers", path: "/publishers" },
 ]
 
 function AppNavbar() {

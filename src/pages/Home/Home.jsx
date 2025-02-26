@@ -10,18 +10,14 @@ function Home() {
     useEffect(() => {
         const loadGames = async () => {
             try {
-                const gamesData = await getGamesBy();
-                console.log("📊 Games received in Home:", gamesData);  // 🔍 Depuración
-
-                if (gamesData && Array.isArray(gamesData.results) && gamesData.results.length > 0) {
-                    setGames(gamesData.results);  // 📌 Ahora accedemos correctamente a los juegos
+                const data = await getGamesBy();
+                if (data && data.results) {
+                    setGames(data.results);
                 } else {
-                    console.error("⚠️ No se encontraron juegos o la API no devolvió resultados.");
                     setGames([]);
                 }
-
             } catch (error) {
-                console.error("❌ Error loading games:", error);
+                console.error("Error:", error);
                 setGames([]);
             } finally {
                 setIsLoading(false);
@@ -35,22 +31,27 @@ function Home() {
         <>
             <section className="w-full mb-6 py-12 md:py-24 lg:py-32 xl:py-48"
                 style={{
-                    backgroundImage: "url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3')",
+                    backgroundImage: "url('https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?ixlib=rb-4.0.3')",
                     backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    position: "relative",
                 }}>
-                <div className="container px-4 md:px-6">
+                <div className="absolute inset-0 bg-gradient-to-r from-metallic-600/80 to-transparent"></div>
+                <div className="container px-4 md:px-6 relative z-10">
                     <div className="flex flex-col items-center space-y-4 text-center">
                         <div className="space-y-2">
-                            <h1 className="text-3xl text-gray-500 font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
-                                Bienvenido a <span className='text-primary-200'>Games Project</span>
+                            <h1 className="text-3xl text-industrial-100 font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
+                                Bienvenido a <span className='text-accent-200'>Games Project</span>
                             </h1>
-                            <p className="mx-auto max-w-[700px] text-gray-700 md:text-xl dark:text-gray-400">
+                            <p className="mx-auto max-w-[700px] text-industrial-200 md:text-xl">
                                 Descubre los mejores videojuegos
                             </p>
                         </div>
                         <div className="space-x-4">
-                            <Link className="inline-flex h-9 items-center justify-center rounded-md bg-primary-200 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-primary-200/90"
-                                to="/games">
+                            <Link 
+                                className="inline-flex h-9 items-center justify-center rounded-md bg-accent-300 px-6 py-3 text-sm font-medium text-white shadow transition-colors hover:bg-accent-400"
+                                to="/games"
+                            >
                                 Ver catálogo de juegos
                             </Link>
                         </div>

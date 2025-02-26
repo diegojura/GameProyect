@@ -13,6 +13,10 @@ import Games from './pages/Games/Games.jsx'
 import AppNavbar from './components/AppNavbar.jsx'
 import AppFooter from "./components/AppFooter.jsx";
 import GameDetails from './pages/GameDetails/GameDetails.jsx';
+import PublisherDetails from './pages/PublisherDetails/PublisherDetails.jsx';
+import TagGames from './pages/TagGames/TagGames.jsx';
+import GenreGames from './pages/GenreGames/GenreGames.jsx';
+import Publishers from './pages/Publishers/Publishers.jsx';
 
 function AppLayout() {
   return <>
@@ -37,6 +41,22 @@ const router = createBrowserRouter([
     {
       path: "/gameDetails/:id",
       element: <GameDetails />
+    },
+    {
+      path: "/publisher/:id",
+      element: <PublisherDetails />
+    },
+    {
+      path: "/tag/:tag",
+      element: <TagGames />
+    },
+    {
+      path: "/genre/:genre",
+      element: <GenreGames />
+    },
+    {
+      path: "/publishers",
+      element: <Publishers />
     }
     ]
   }

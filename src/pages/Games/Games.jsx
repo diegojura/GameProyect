@@ -1,77 +1,108 @@
-import { useEffect, useState } from "react";
-import { getGamesBy } from '../../services/games';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchGames, setSearchTerm, setCurrentPage, setCurrentSort } from '../../store/slices/gamesSlice';
+import { SORT_OPTIONS } from '../../services/gamesService';
 import GameCard from '../../components/GameCard';
 import Pagination from '../../components/Pagination';
 
-function Games() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [games, setGames] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+const SORT_LABELS = {
+    [SORT_OPTIONS.RELEVANCE]: 'Relevancia',
+    [SORT_OPTIONS.NAME]: 'Nombre (A-Z)',
+    [SORT_OPTIONS.RELEASED]: 'Fecha de lanzamiento',
+    [SORT_OPTIONS.ADDED]: 'Fecha de agregado',
+    [SORT_OPTIONS.CREATED]: 'Fecha de creación',
+    [SORT_OPTIONS.RATING]: 'Valoración',
+    [SORT_OPTIONS.METACRITIC]: 'Metacritic'
+};
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getGamesBy("action", currentPage);
-        
-        if (data && data.results) {
-          setGames(data.results);
-          setTotalPages(Math.ceil(data.count / 20));
-        } else {
-          console.error("No se encontraron juegos");
-          setGames([]);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        setGames([]);
-      } finally {
-        setIsLoading(false);
-      }
+function Games() {
+    const dispatch = useDispatch();
+    const { 
+        games, 
+        isLoading, 
+        currentPage, 
+        totalPages, 
+        searchTerm,
+        currentSort 
+    } = useSelector(state => state.games);
+
+    useEffect(() => {
+        dispatch(fetchGames({ 
+            query: searchTerm, 
+            page: currentPage,
+            ordering: currentSort 
+        }));
+    }, [dispatch, currentPage, searchTerm, currentSort]);
+
+    const handlePageChange = (page) => {
+        dispatch(setCurrentPage(page));
+        window.scrollTo(0, 0);
     };
 
-    fetchGames();
-  }, [currentPage]);
+    const handleInputChange = (event) => {
+        dispatch(setSearchTerm(event.target.value));
+    };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    window.scrollTo(0, 0);
-  };
+    const handleSortChange = (event) => {
+        dispatch(setCurrentSort(event.target.value));
+    };
 
-  return (
-    <section className="bg-industrial-100 p-6 rounded-lg shadow-lg">
-      <h1 className='font-rubiksh text-metallic-600 font-extrabold text-4xl mb-6'>
-        Videojuegos Populares
-      </h1>
-      
-      {isLoading ? (
-        <div className="flex justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
-        </div>
-      ) : games.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {games.map((game) => (
-              <GameCard 
-                key={game.id} 
-                id={game.id} 
-                title={game.name} 
-                posterUrl={game.background_image} 
-              />
-            ))}
-          </div>
-          
-          <Pagination 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      ) : (
-        <p className="text-red-400 text-center">No se encontraron juegos.</p>
-      )}
-    </section>
-  );
+    return (
+        <section className="card-industrial p-8 rounded-xl">
+            <h1 className='font-rubiksh text-gray-200 font-extrabold text-4xl mb-6'>
+                Videojuegos Populares
+            </h1>
+
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                <input 
+                    type="text" 
+                    value={searchTerm} 
+                    onChange={handleInputChange}
+                    placeholder="Buscar juegos..." 
+                    className="flex-1 p-2 border rounded-lg text-metallic-600"
+                />
+                
+                <select
+                    value={currentSort}
+                    onChange={handleSortChange}
+                    className="p-2 border rounded-lg text-metallic-600 bg-white cursor-pointer hover:bg-gray-50"
+                >
+                    {Object.entries(SORT_LABELS).map(([value, label]) => (
+                        <option key={value} value={value}>
+                            Ordenar por: {label}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            
+            {isLoading ? (
+                <div className="flex justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
+                </div>
+            ) : games.length > 0 ? (
+                <>
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                        {games.map((game) => (
+                            <GameCard 
+                                key={game.id} 
+                                id={game.id} 
+                                title={game.name} 
+                                posterUrl={game.background_image} 
+                            />
+                        ))}
+                    </div>
+                    
+                    <Pagination 
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                    />
+                </>
+            ) : (
+                <p className="text-red-400 text-center">No se encontraron juegos.</p>
+            )}
+        </section>
+    );
 }
 
 export default Games;

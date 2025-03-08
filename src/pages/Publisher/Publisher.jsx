@@ -36,7 +36,7 @@ function Publishers() {
 
     return (
         <div className="card-industrial p-8 rounded-xl">
-            <h1 className="text-4xl font-bold text-metallic-500 mb-8 metallic-text">
+            <h1 className="text-4xl font-bold text-gray-200 mb-8 metallic-text">
                 Publishers
             </h1>
 

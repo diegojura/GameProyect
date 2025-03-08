@@ -37,36 +37,38 @@ function TagGames() {
     };
 
     return (
-        <div className="bg-industrial-100 p-6 rounded-lg shadow-lg">
-            <h1 className="text-4xl font-bold text-metallic-600 mb-6">
-                Juegos con tag: {tag}
-            </h1>
+        <div className="container mx-auto px-4 py-8">
+            <div className="card-industrial p-8 rounded-xl">
+                <h1 className="text-4xl font-bold text-gray-200 mb-6">
+                    Juegos con tag: {tag}
+                </h1>
 
-            {isLoading ? (
-                <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
-                </div>
-            ) : games.length > 0 ? (
-                <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {games.map(game => (
-                            <GameCard
-                                key={game.id}
-                                id={game.id}
-                                title={game.name}
-                                posterUrl={game.background_image}
-                            />
-                        ))}
+                {isLoading ? (
+                    <div className="flex justify-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
                     </div>
-                    <Pagination
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onPageChange={handlePageChange}
-                    />
-                </>
-            ) : (
-                <p className="text-red-500 text-center">No se encontraron juegos con este tag.</p>
-            )}
+                ) : games.length > 0 ? (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {games.map(game => (
+                                <GameCard
+                                    key={game.id}
+                                    id={game.id}
+                                    title={game.name}
+                                    posterUrl={game.background_image}
+                                />
+                            ))}
+                        </div>
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    </>
+                ) : (
+                    <p className="text-red-400 text-center">No se encontraron juegos con este tag.</p>
+                )}
+            </div>
         </div>
     );
 }

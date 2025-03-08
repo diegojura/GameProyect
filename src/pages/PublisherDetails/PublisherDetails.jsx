@@ -58,60 +58,70 @@ function PublisherDetails() {
     };
 
     if (isLoading) return (
-        <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
+        <div className="container mx-auto px-4 py-8">
+            <div className="card-industrial p-8 rounded-xl flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-metallic-500"></div>
+            </div>
         </div>
     );
 
-    if (!publisher) return <div className="text-red-500 text-center">Publisher no encontrado</div>;
+    if (!publisher) return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="card-industrial p-8 rounded-xl">
+                <div className="text-red-400 text-center">Publisher no encontrado</div>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="bg-industrial-100 p-6 rounded-lg shadow-lg">
-            <h1 className="text-4xl font-bold text-metallic-600 mb-6">{publisher.name}</h1>
-            
-            {publisher.image_background && (
-                <img 
-                    src={publisher.image_background}
-                    alt={publisher.name}
-                    className="w-full h-64 object-cover rounded-lg mb-6"
-                />
-            )}
-
-            <div className="space-y-8">
-                <div className="prose prose-lg max-w-none">
-                    {formatDescription(publisher.description)?.map((section, index) => (
-                        <div key={index} className="mb-6">
-                            {section.title && (
-                                <h2 className="text-2xl font-semibold text-metallic-500 mb-3">
-                                    {section.title}
-                                </h2>
-                            )}
-                            {section.content.map((paragraph, pIndex) => (
-                                <p key={pIndex} className="text-metallic-600 mb-2 leading-relaxed">
-                                    {paragraph}
-                                </p>
-                            ))}
-                        </div>
-                    ))}
-                </div>
-
-                {publisher.games && publisher.games.length > 0 && (
-                    <div>
-                        <h2 className="text-2xl font-semibold text-metallic-500 mb-6">
-                            Juegos Publicados
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {publisher.games.map(game => (
-                                <GameCard
-                                    key={game.id}
-                                    id={game.id}
-                                    title={game.name}
-                                    posterUrl={game.background_image}
-                                />
-                            ))}
-                        </div>
-                    </div>
+        <div className="container mx-auto px-4 py-8">
+            <div className="card-industrial p-8 rounded-xl">
+                <h1 className="text-4xl font-bold text-gray-200 mb-6">{publisher.name}</h1>
+                
+                {publisher.image_background && (
+                    <img 
+                        src={publisher.image_background}
+                        alt={publisher.name}
+                        className="w-full h-64 object-cover rounded-lg mb-6"
+                    />
                 )}
+
+                <div className="space-y-8">
+                    <div className="prose prose-lg max-w-none">
+                        {formatDescription(publisher.description)?.map((section, index) => (
+                            <div key={index} className="mb-6">
+                                {section.title && (
+                                    <h2 className="text-2xl font-semibold text-gray-200 mb-3">
+                                        {section.title}
+                                    </h2>
+                                )}
+                                {section.content.map((paragraph, pIndex) => (
+                                    <p key={pIndex} className="text-gray-300 mb-2 leading-relaxed">
+                                        {paragraph}
+                                    </p>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                    {publisher.games && publisher.games.length > 0 && (
+                        <div>
+                            <h2 className="text-2xl font-semibold text-gray-200 mb-6">
+                                Juegos Publicados
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {publisher.games.map(game => (
+                                    <GameCard
+                                        key={game.id}
+                                        id={game.id}
+                                        title={game.name}
+                                        posterUrl={game.background_image}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

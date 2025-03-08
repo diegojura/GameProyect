@@ -1,5 +1,5 @@
 const BASE_URL = "https://api.rawg.io/api";
-const API_KEY = "4c48b705cbda48658820931823e94922";
+const API_KEY = "e107054497d44b2f85b9003c09668cbd"; 
 
 export const getGamesBy = async (queryOrId = "", page = 1) => {
     try {
